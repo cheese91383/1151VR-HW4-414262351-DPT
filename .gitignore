@@ -1,0 +1,43 @@
+# Unity 自動產生、不用上傳的資料夾
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Visual Studio / Rider 的設定檔
+.vs/
+.vscode/
+.idea/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.slnx
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+.vsconfig
+
+# 輸出的手機安裝檔
+*.apk
+*.aab
+*.unitypackage
+
+# 系統產生的檔案
+.DS_Store
+Thumbs.db
+crashlytics-buildid.txt
+sysinfo.txt
