@@ -12,6 +12,7 @@ public class PlaneController : MonoBehaviour
     public float minHeight = 1f;
     public float maxHeight = 20f;
     public float maxSide = 40f;       // 從出生點往左右最多飛多遠
+    public float overshoot = 20f;     // 飛過終點多遠還沒進去就算失敗
 
     [Header("音效")]
     public AudioClip hitClip;     // 撞到障礙物
@@ -22,6 +23,7 @@ public class PlaneController : MonoBehaviour
 
     [Header("UI（可不填，不填就用畫面左上角的預設文字）")]
     public GameObject clearPanel;   // 過關畫面，遊戲開始時會自動隱藏
+    public GameObject failPanel;    // 失敗畫面，遊戲開始時會自動隱藏
     public Text checkpointText;     // 顯示「檢查站 1 / 3」的文字
 
     Rigidbody rb;
@@ -29,7 +31,9 @@ public class PlaneController : MonoBehaviour
     float h, v;
     int passed = 0;
     int total = 0;
-    bool finished = false;
+    bool finished = false;   // 遊戲結束（過關或失敗）
+    bool failed = false;
+    float endZ = float.MaxValue;
     float startX;
 
     // 閃過障礙物用
@@ -47,9 +51,13 @@ public class PlaneController : MonoBehaviour
         startX = rb.position.x;
 
         foreach (Checkpoint c in FindObjectsByType<Checkpoint>(FindObjectsSortMode.None))
+        {
             if (!c.isFinish) total++;
+            else endZ = c.GetComponent<Collider>().bounds.max.z + overshoot;  // 終點後面就是邊界
+        }
 
         if (clearPanel != null) clearPanel.SetActive(false);
+        if (failPanel != null) failPanel.SetActive(false);
         UpdateCheckpointText();
     }
 
@@ -89,6 +97,15 @@ public class PlaneController : MonoBehaviour
         rb.MovePosition(next);
 
         CheckDodge();
+
+        // 飛過終點還沒進去 → 失敗
+        if (next.z > endZ)
+        {
+            finished = true;
+            failed = true;
+            if (hitClip != null) sfx.PlayOneShot(hitClip);
+            if (failPanel != null) failPanel.SetActive(true);
+        }
     }
 
     // 飛過障礙物而且沒撞到 → 播閃過音效
@@ -168,11 +185,12 @@ public class PlaneController : MonoBehaviour
         if (checkpointText == null)
             GUI.Label(new Rect(20, 20, Screen.width, Screen.height / 8f), "檢查站 " + passed + " / " + total, style);
 
-        if (finished && clearPanel == null)
+        if (finished && (failed ? failPanel : clearPanel) == null)
         {
             style.fontSize = Screen.height / 12;
             style.alignment = TextAnchor.MiddleCenter;
-            GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "抵達終點！\n點螢幕重新開始", style);
+            string msg = failed ? "沒有抵達終點！" : "抵達終點！";
+            GUI.Label(new Rect(0, 0, Screen.width, Screen.height), msg + "\n點螢幕重新開始", style);
         }
     }
 }
