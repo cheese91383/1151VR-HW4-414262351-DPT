@@ -42,3 +42,6 @@ sysinfo.txt
 /.utmp/
 *_BackUpThisFolder_ButDontShipItWithYourGame/
 ~$*
+
+# 作業文件不上傳
+*.docx
