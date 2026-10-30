@@ -7,31 +7,31 @@ using UnityEngine.UI;
 public class PlaneController : MonoBehaviour
 {
     [Header("移動")]
-    public float forwardSpeed = 15f;  // 往前飛的速度
-    public float moveSpeed = 10f;     // 上下左右的速度
-    public float minHeight = 1f;
-    public float maxHeight = 20f;
-    public float maxSide = 40f;       // 從出生點往左右最多飛多遠
-    public float overshoot = 20f;     // 飛過終點多遠還沒進去就算失敗
+    public float forwardSpeed = 30f; 
+    public float moveSpeed = 60f;    
+    public float minHeight = 10f;
+    public float maxHeight = 90f;
+    public float maxSide = 200f;      
+    public float overshoot = 20f;     
 
     [Header("音效")]
-    public AudioClip hitClip;     // 撞到障礙物
-    public AudioClip passClip;    // 通過檢查站
-    public AudioClip finishClip;  // 抵達終點（可不填，會改播 passClip）
-    public AudioClip dodgeClip;   // 驚險閃過障礙物（可不填，會改播 passClip）
-    public float dodgeDistance = 6f;  // 從障礙物旁邊多近飛過才算「閃過」
+    public AudioClip hitClip;    
+    public AudioClip passClip;    
+    public AudioClip finishClip;  
+    public AudioClip dodgeClip;   
+    public float dodgeDistance = 30f;  
 
-    [Header("UI（可不填，不填就用畫面左上角的預設文字）")]
-    public GameObject clearPanel;   // 過關畫面，遊戲開始時會自動隱藏
-    public GameObject failPanel;    // 失敗畫面，遊戲開始時會自動隱藏
-    public Text checkpointText;     // 顯示「檢查站 1 / 3」的文字
+    [Header("UI")]
+    public GameObject clearPanel;   
+    public GameObject failPanel;    
+    public Text checkpointText;     
 
     Rigidbody rb;
     AudioSource sfx;
     float h, v;
     int passed = 0;
     int total = 0;
-    bool finished = false;   // 遊戲結束（過關或失敗）
+    bool finished = false;   
     bool failed = false;
     float endZ = float.MaxValue;
     float startX;
@@ -47,13 +47,14 @@ public class PlaneController : MonoBehaviour
         rb.useGravity = false;
         rb.constraints = RigidbodyConstraints.FreezeRotation;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;  
         sfx = gameObject.AddComponent<AudioSource>();
         startX = rb.position.x;
 
         foreach (Checkpoint c in FindObjectsByType<Checkpoint>(FindObjectsSortMode.None))
         {
             if (!c.isFinish) total++;
-            else endZ = c.GetComponent<Collider>().bounds.max.z + overshoot;  // 終點後面就是邊界
+            else endZ = c.GetComponent<Collider>().bounds.max.z + overshoot;  
         }
 
         if (clearPanel != null) clearPanel.SetActive(false);
@@ -98,7 +99,7 @@ public class PlaneController : MonoBehaviour
 
         CheckDodge();
 
-        // 飛過終點還沒進去 → 失敗
+       
         if (next.z > endZ)
         {
             finished = true;
@@ -108,12 +109,11 @@ public class PlaneController : MonoBehaviour
         }
     }
 
-    // 飛過障礙物而且沒撞到 → 播閃過音效
     void CheckDodge()
     {
         if (obstacles == null)
         {
-            // 第一次執行時收集所有障礙物（隨機生成的也會算進來），照前後順序排好
+            
             obstacles = new List<Collider>();
             foreach (Collider col in FindObjectsByType<Collider>(FindObjectsSortMode.None))
                 if (col.CompareTag("Obstacle") && !col.isTrigger) obstacles.Add(col);
@@ -176,7 +176,7 @@ public class PlaneController : MonoBehaviour
             checkpointText.text = "檢查站 " + passed + " / " + total;
     }
 
-    // 沒有設定 UI 時的預設文字
+  
     void OnGUI()
     {
         GUIStyle style = new GUIStyle(GUI.skin.label);

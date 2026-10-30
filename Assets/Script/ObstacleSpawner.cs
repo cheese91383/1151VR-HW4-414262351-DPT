@@ -1,21 +1,21 @@
 using UnityEngine;
 
-// 遊戲開始時隨機擺障礙物：不會跟其他有 Collider 的物件重疊，也不會太靠近出生點。
+
 public class ObstacleSpawner : MonoBehaviour
 {
-    [Header("要隨機擺的障礙物（從 Project 拖模型進來）")]
-    public GameObject[] groundPrefabs;    // 放在地上的，例如石頭
-    public GameObject[] floatingPrefabs;  // 浮在空中的，例如隕石
+    [Header("要隨機擺的障礙物")]
+    public GameObject[] groundPrefabs;    
+    public GameObject[] floatingPrefabs;  
     public int groundCount = 15;
     public int floatingCount = 10;
 
     [Header("範圍")]
-    public Transform spawnPoint;          // 把飛機拖進來
-    public float safeRadius = 30f;        // 出生點附近多遠內不放
+    public Transform spawnPoint;          
+    public float safeRadius = 30f;        
     public float minX = -20f, maxX = 20f;
-    public float minZ = 20f, maxZ = 250f; // maxZ 設在終點 hangar 前面
+    public float minZ = 20f, maxZ = 250f; 
     public float floatMinHeight = 4f, floatMaxHeight = 16f;
-    public float gap = 3f;                // 和其他物件至少隔多遠
+    public float gap = 3f;                
 
     [Header("大小：每個障礙物會在這兩個倍數之間隨機放大縮小")]
     public float minScale = 2f;
@@ -41,7 +41,7 @@ public class ObstacleSpawner : MonoBehaviour
         {
             Vector3 p = new Vector3(Random.Range(minX, maxX), 0f, Random.Range(minZ, maxZ));
 
-            // 太靠近出生點就換位置
+            
             if (spawnPoint != null)
             {
                 Vector3 s = spawnPoint.position;
@@ -53,7 +53,7 @@ public class ObstacleSpawner : MonoBehaviour
             GameObject go = Instantiate(prefab, p, rot, transform);
             go.transform.localScale *= Random.Range(minScale, maxScale);
 
-            // 地上的：底部貼地；空中的：浮在地面上方隨機高度
+            
             Bounds b = GetBounds(go);
             float ground = GroundHeight(p);
             float shift = floating
@@ -62,7 +62,7 @@ public class ObstacleSpawner : MonoBehaviour
             go.transform.position += Vector3.up * shift;
             b.center += Vector3.up * shift;
 
-            // 檢查有沒有撞到其他東西（地形不算）
+            
             bool blocked = false;
             foreach (Collider c in Physics.OverlapBox(b.center, b.extents + Vector3.one * gap,
                          Quaternion.identity, ~0, QueryTriggerInteraction.Collide))
@@ -109,7 +109,7 @@ public class ObstacleSpawner : MonoBehaviour
         {
             mf.gameObject.tag = "Obstacle";
             if (mf.GetComponent<Collider>() == null)
-                mf.gameObject.AddComponent<MeshCollider>();
+                mf.gameObject.AddComponent<BoxCollider>();  
         }
     }
 }

@@ -37,3 +37,8 @@
 Thumbs.db
 crashlytics-buildid.txt
 sysinfo.txt
+
+# Android 打包時產生的暫存資料夾
+/.utmp/
+*_BackUpThisFolder_ButDontShipItWithYourGame/
+~$*
