@@ -1,7 +1,6 @@
 # 1151VR-HW4-414262351-DPT
 
 - YouTube : <https://youtu.be/TygZAOsDD7A?si=OzHix4sE9RDsv003>
-- GitHub : <https://github.com/cheese91383/1151VR-HW4-414262351-DPT>
 
 ![screenshot1](image/screenshot1.png)
 ![screenshot2](image/screenshot2.png)
